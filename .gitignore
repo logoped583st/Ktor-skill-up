@@ -1,0 +1,10 @@
+.idea
+*.iml
+build
+target
+
+.gradle
+local.properties
+*.lock
+.out
+.build
