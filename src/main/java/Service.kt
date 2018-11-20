@@ -1,7 +1,4 @@
-import Entities.Task
-import Entities.Tasks
-import Entities.User
-import Entities.Users
+import Entities.*
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
@@ -26,7 +23,7 @@ class Service(val call: ApplicationCall) {
 
 
     private fun toTask(row: ResultRow): Task =
-            Task(row[Tasks.id], row[Tasks.description])
+            Task(row[Tasks.id].toString(), row[Tasks.description])
 
     suspend fun auth(login: String, password: String) {
 
@@ -118,16 +115,15 @@ class Service(val call: ApplicationCall) {
         }
     }
 
-    suspend fun createTask(id: UUID, description: String): Task {
+    suspend fun createTask(id: UUID, description: String) {
+        var uuid: Int? = null
         transaction {
-            Tasks.insert { it ->
+            uuid = Tasks.insert { it ->
                 it[Tasks.id] = id
                 it[Tasks.description] = description
-            }
+            } get Tasks.uniqId
         }
-        call.respond(HttpStatusCode(200, "Okey"), return Task(id, description)
-        )
-
+        call.respond(HttpStatusCode(200, "Okey"), OutputTask(uuid.toString(), id.toString(), description))
     }
 
 

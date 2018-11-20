@@ -1,6 +1,5 @@
 package Entities
 
-import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import java.util.*
 

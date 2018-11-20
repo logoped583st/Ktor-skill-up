@@ -1,7 +1,10 @@
 package routes
 
+import Entities.Task
 import Service
 import io.ktor.application.call
+import io.ktor.request.receive
+import io.ktor.request.receiveOrNull
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -16,11 +19,9 @@ fun Route.tasks() {
     }
 
     post(path = "/createTask") {
-        val id = call.parameters["id"]
-        val description = call.parameters["description"]
+        val task = call.receive<Task>()
         val service = Service(call)
-        service.createTask(UUID.fromString(id), description!!)
+        service.createTask(UUID.fromString(task.id), task.description)
     }
-
 
 }
