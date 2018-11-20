@@ -24,7 +24,7 @@ class Main {
         val config = HikariConfig()
         config.driverClassName = "org.h2.Driver"
         config.jdbcUrl = "jdbc:h2:tcp://localhost/~/test"
-        config.username = "sa"
+        config.username = "lab7"
         config.maximumPoolSize = 3
         config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
         config.validate()
