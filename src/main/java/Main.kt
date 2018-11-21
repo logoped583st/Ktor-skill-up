@@ -9,8 +9,11 @@ import io.ktor.features.*
 import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
 import io.ktor.routing.routing
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.exists
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.admin
 import routes.auth
@@ -31,7 +34,13 @@ class Main {
         val hikariDatabase = HikariDataSource(config)
         Database.connect(hikariDatabase)
         transaction {
-            create(Users,Tasks)
+            //            if(!Users.exists()) {
+//                val statement = TransactionManager.current().connection.createStatement()
+//
+//                val query = "CREATE TABLE USERS AS SELECT * FROM CSVREAD('a.csv');"
+//                statement.execute(query)
+//            }
+            create(Users, Tasks)
             Users.insert { us ->
                 us[email] = "admin"
                 us[Users.password] = Hasher.hash("admin")
@@ -62,8 +71,5 @@ class Main {
                 tasks()
             }
         }
-
-
     }
-
 }
