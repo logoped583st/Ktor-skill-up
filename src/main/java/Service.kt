@@ -23,7 +23,9 @@ class Service(val call: ApplicationCall) {
 
 
     private fun toTask(row: ResultRow): Task =
-            Task(row[Tasks.id].toString(), row[Tasks.description])
+            Task(row[Tasks.id].toString(),
+                    row[Tasks.description],
+                    row[Tasks.nameTask])
 
     suspend fun auth(login: String, password: String) {
 
@@ -115,15 +117,16 @@ class Service(val call: ApplicationCall) {
         }
     }
 
-    suspend fun createTask(id: UUID, description: String) {
+    suspend fun createTask(id: UUID, description: String, nameTask: String) {
         var uuid: Int? = null
         transaction {
             uuid = Tasks.insert { it ->
                 it[Tasks.id] = id
                 it[Tasks.description] = description
+                it[Tasks.nameTask] = nameTask
             } get Tasks.uniqId
         }
-        call.respond(HttpStatusCode(200, "Okey"), OutputTask(uuid.toString(), id.toString(), description))
+        call.respond(HttpStatusCode(200, "Okey"), OutputTask(uuid.toString(), id.toString(), description, nameTask))
     }
 
 
@@ -132,5 +135,14 @@ class Service(val call: ApplicationCall) {
             (Tasks.id eq id)
         }.mapNotNull { toTask(it) }
                 .singleOrNull()
+    }
+
+    suspend fun getUser(id: UUID) {
+        val user = transaction {
+            return@transaction toUser(Users.select {
+                (Users.id eq id)
+            }.single())
+        }
+        call.respond(HttpStatusCode(200, "Okey"), user)
     }
 }

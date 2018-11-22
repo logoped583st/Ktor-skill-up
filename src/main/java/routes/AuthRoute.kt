@@ -4,6 +4,7 @@ import Service
 import io.ktor.application.call
 import io.ktor.routing.Route
 import io.ktor.routing.get
+import java.util.*
 
 fun Route.auth() {
 
@@ -20,6 +21,12 @@ fun Route.auth() {
         val service = Service(call)
         print("route")
         service.auth(login!!, password!!)
+    }
+
+    get("/getUser") {
+        val id = call.parameters["id"]
+        val service = Service(call)
+        service.getUser(UUID.fromString(id))
     }
 
 

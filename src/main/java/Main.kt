@@ -23,7 +23,7 @@ import java.util.*
 
 class Main {
 
-    fun initDb() {
+    private fun initDb() {
         val config = HikariConfig()
         config.driverClassName = "org.h2.Driver"
         config.jdbcUrl = "jdbc:h2:tcp://localhost/~/test"
@@ -49,6 +49,9 @@ class Main {
                 us[isAdmin] = true
             }
         }
+        val a = 55
+        val b = 66
+        a xor b
     }
 
     fun Application.main() {
