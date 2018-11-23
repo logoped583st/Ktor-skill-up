@@ -2,10 +2,7 @@ import Entities.*
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import kotlin.collections.ArrayList
@@ -26,6 +23,12 @@ class Service(val call: ApplicationCall) {
             Task(row[Tasks.id].toString(),
                     row[Tasks.description],
                     row[Tasks.nameTask])
+
+    private fun toOutPutTask(row: ResultRow): OutputTask = OutputTask(
+            row[Tasks.uniqId].toString(),
+            row[Tasks.id].toString(),
+            row[Tasks.description],
+            row[Tasks.nameTask])
 
     suspend fun auth(login: String, password: String) {
 
@@ -101,20 +104,17 @@ class Service(val call: ApplicationCall) {
     }
 
     suspend fun getAllTasks(id: UUID) {
-        val tasks: ArrayList<Task> = ArrayList()
+        val tasks: ArrayList<OutputTask> = ArrayList()
         transaction {
             Tasks.select {
                 Tasks.id eq id
             }.map {
-                tasks.add(toTask(it))
+                tasks.add(toOutPutTask(it))
             }
         }
-        if (tasks.isEmpty()) {
-            call.respond(HttpStatusCode(401, "Username already exist"), "Username already exist")
 
-        } else {
-            call.respond(HttpStatusCode(200, "Okey"), tasks)
-        }
+        call.respond(HttpStatusCode(200, "Okey"), tasks)
+
     }
 
     suspend fun createTask(id: UUID, description: String, nameTask: String) {
@@ -145,4 +145,35 @@ class Service(val call: ApplicationCall) {
         }
         call.respond(HttpStatusCode(200, "Okey"), user)
     }
+
+    suspend fun deleteTask(id: Int, userUUID: UUID) {
+        val task: List<OutputTask> = transaction {
+            (Tasks.deleteWhere {
+                (Tasks.uniqId eq id) and (Tasks.id eq userUUID)
+            })
+            return@transaction Tasks.select {
+                Tasks.id eq userUUID
+            }.map {
+                toOutPutTask(it)
+            }
+        }
+        call.respond(HttpStatusCode(200, "Okey"), task)
+    }
+
+    suspend fun updateTask(id: Int, userUUID: UUID, taskName: String, taskDescription: String) {
+        val task: List<OutputTask> = transaction {
+            Tasks.update({ (Tasks.uniqId eq id) and (Tasks.id eq userUUID) }) {
+                it[description] = taskDescription
+                it[nameTask] = taskName
+            }
+
+            return@transaction Tasks.select {
+                Tasks.id eq userUUID
+            }.map {
+                toOutPutTask(it)
+            }
+        }
+        call.respond(HttpStatusCode(200, "Okey"), task)
+    }
+
 }

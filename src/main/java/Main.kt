@@ -6,14 +6,14 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.*
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.exists
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.admin
 import routes.auth
@@ -60,6 +60,13 @@ class Main {
         install(DefaultHeaders)
         install(CORS) {
             anyHost()
+
+            (HttpMethod.DefaultMethods).forEach { it ->
+                this.method(it)
+            }
+            header(HttpHeaders.AccessControlAllowOrigin)
+            allowCredentials = true
+            header(HttpHeaders.XForwardedProto)
         }
         install(ContentNegotiation) {
             jackson {
