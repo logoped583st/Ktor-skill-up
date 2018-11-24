@@ -24,11 +24,7 @@ class Service(val call: ApplicationCall) {
                     row[Tasks.description],
                     row[Tasks.nameTask])
 
-    private fun toOutPutTask(row: ResultRow): OutputTask = OutputTask(
-            row[Tasks.uniqId].toString(),
-            row[Tasks.id].toString(),
-            row[Tasks.description],
-            row[Tasks.nameTask])
+
 
     suspend fun auth(login: String, password: String) {
 

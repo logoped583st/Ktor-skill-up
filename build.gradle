@@ -40,21 +40,31 @@ kotlin {
     }
 }
 
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/lib'
+        }
+    }
+}
+
 dependencies {
+
+
 
     compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.0"
     compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "io.ktor:ktor-jackson:$ktor_version"
     compile "io.ktor:ktor-websockets:$ktor_version"
-
     compile "com.h2database:h2:$h2_version"
     compile "org.jetbrains.exposed:exposed:$exposed_version"
     compile 'com.zaxxer:HikariCP:3.2.0'
-
+    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.2'
     compile "ch.qos.logback:logback-classic:1.2.1"
     testCompile "org.assertj:assertj-core:3.10.0"
     testCompile "io.rest-assured:rest-assured:3.1.0"

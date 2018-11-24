@@ -1,4 +1,5 @@
 import Entities.Tasks
+import Entities.Tasks.description
 import Entities.Users
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.zaxxer.hikari.HikariConfig
@@ -11,9 +12,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.jackson.jackson
 import io.ktor.routing.Routing
 import io.ktor.routing.routing
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.admin
 import routes.auth
@@ -27,31 +27,40 @@ class Main {
         val config = HikariConfig()
         config.driverClassName = "org.h2.Driver"
         config.jdbcUrl = "jdbc:h2:tcp://localhost/~/test"
-        config.username = "lab7"
+        config.username = "sa"
         config.maximumPoolSize = 3
         config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
         config.validate()
         val hikariDatabase = HikariDataSource(config)
         Database.connect(hikariDatabase)
+        parseXmlTasks()
+
         transaction {
-            //            if(!Users.exists()) {
-//                val statement = TransactionManager.current().connection.createStatement()
-//
-//                val query = "CREATE TABLE USERS AS SELECT * FROM CSVREAD('a.csv');"
-//                statement.execute(query)
-//            }
-            create(Users, Tasks)
-            Users.insert { us ->
-                us[email] = "admin"
-                us[Users.password] = Hasher.hash("admin")
-                us[photo] = "https://www.teksteshqip.com/img_upz/allart_full/63351.jpg"
-                us[id] = UUID.randomUUID()
-                us[isAdmin] = true
+            if (!Users.exists()) {
+
             }
+//            if (!Tasks.exists()) {
+//                SchemaUtils.create(Tasks)
+//                parseXmlTasks().toList().forEach { it ->
+//                    Tasks.insert { task ->
+//                        task[description] = it.description
+//                        task[id] = UUID.fromString(it.id)
+//                        task[nameTask] = it.nameTask
+//                        task[uniqId] = it.uniqId.toInt()
+//                    }
+//                }
+//
+//            }
+           create(Users, Tasks)
+//            Users.insert { us ->
+//                us[email] = "admin"
+//                us[Users.password] = Hasher.hash("admin")
+//                us[photo] = "https://www.teksteshqip.com/img_upz/allart_full/63351.jpg"
+//                us[id] = UUID.randomUUID()
+//                us[isAdmin] = true
+//            }
         }
-        val a = 55
-        val b = 66
-        a xor b
+
     }
 
     fun Application.main() {
@@ -81,5 +90,7 @@ class Main {
                 tasks()
             }
         }
+
+       // writeXmlFile()
     }
 }
