@@ -14,11 +14,11 @@ import javax.crypto.KeyGenerator
 object JWTAuthorization {
 
     private val secret = KeyGenerator.getInstance("AES").generateKey()
-    private val algorithm = Algorithm.HMAC256(secret.toString())
+    val algorithm = Algorithm.HMAC256("secret")
 
 
     //We will sign our JWT with our ApiKey secret
-       fun makeJwtVerifier(issuer: String, audience: String): JWTVerifier = JWT
+    fun makeJwtVerifier(issuer: String, audience: String): JWTVerifier = JWT
             .require(algorithm)
             .withAudience(audience)
             .withIssuer(issuer)

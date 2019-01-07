@@ -22,8 +22,6 @@ class User(id: EntityID<Int>) : IntEntity(id), Serializable {
     var photo: String? by Users.photo
     var description by Users.description
     var badges by Badge via UsersBadges
-
-
 }
 
 data class UserModel(val id: Int,
