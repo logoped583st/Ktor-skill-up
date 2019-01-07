@@ -1,14 +1,14 @@
 package db
 
-interface BaseDAO<Entity : Any> {
+interface BaseDAO<Entity : Any, OutputEntity:Any> {
 
-    fun insert(data: Entity): Entity
+    fun insert(data: Entity): OutputEntity
 
-    fun update(data: Entity): Entity
+    fun update(data: Entity): OutputEntity
 
-    fun delete(id: Int): Boolean
+    fun delete(id: Int)
 
-    fun getAll(): List<Entity>
+    fun getAll(): List<OutputEntity>
 
-    fun getData(id: Int): Entity
+    fun getData(id: Int): OutputEntity
 }

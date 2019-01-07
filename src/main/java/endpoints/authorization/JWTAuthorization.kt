@@ -8,11 +8,17 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
+import javax.crypto.KeyGenerator
+
 
 object JWTAuthorization {
 
-    private val algorithm = Algorithm.HMAC256("secret")
-    fun makeJwtVerifier(issuer: String, audience: String): JWTVerifier = JWT
+    private val secret = KeyGenerator.getInstance("AES").generateKey()
+    private val algorithm = Algorithm.HMAC256(secret.toString())
+
+
+    //We will sign our JWT with our ApiKey secret
+       fun makeJwtVerifier(issuer: String, audience: String): JWTVerifier = JWT
             .require(algorithm)
             .withAudience(audience)
             .withIssuer(issuer)
