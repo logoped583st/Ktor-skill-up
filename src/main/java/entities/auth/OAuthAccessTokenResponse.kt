@@ -17,4 +17,5 @@ sealed class OAuthAccessTokenResponse : Principal {
             val refreshToken: String?,
             val extraParameters: Parameters = Parameters.Empty
     ) : OAuthAccessTokenResponse()
+
 }

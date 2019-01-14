@@ -1,11 +1,15 @@
+import com.auth0.jwt.JWT
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import controllers.auth.toHui
 import db.UserDao
-import com.auth0.jwt.*
-import endpoints.authorization.JWTAuthorization
-import endpoints.authorization.jwtAuth
+import di.kodein
+import endpoints.authorization.auth
+import utils.JWTAuthorization
+import utils.jwtAuth
 import entities.Badges
+import entities.Credentials
 import entities.Users
 import entities.UsersBadges
 import io.ktor.application.Application
@@ -29,6 +33,7 @@ import io.ktor.server.netty.Netty
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.kodein.di.generic.instance
 
 class Main {
     companion object {
@@ -54,11 +59,13 @@ private fun initDb() {
     Database.connect(hikariDatabase)
 
     transaction {
-        SchemaUtils.create(Users, UsersBadges, Badges)
+        SchemaUtils.create(UsersBadges, Users, Badges, Credentials)
     }
 }
 
 fun Application.main() {
+
+    toHui
     initDb()
     jwtAuth()
     install(Compression)
@@ -76,6 +83,7 @@ fun Application.main() {
     install(CallLogging)
     install(Routing) {
         routing {
+            auth()
             authenticate {
                 route("/test") {
                     handle {
@@ -94,12 +102,13 @@ fun Application.main() {
             get("/token") {
                 val issuer = environment.config.property("jwt.domain").getString()
                 val audience = environment.config.property("jwt.audience").getString()
+                val jwtAuthorization: JWTAuthorization by kodein.instance()
 
                 val a = JWT.create()
                         .withIssuer(issuer)
                         .withAudience(audience)
                         .withJWTId("test")
-                        .sign(JWTAuthorization.algorithm)
+                        .sign(jwtAuthorization.algorithm)
 
                 call.respondText { a }
             }

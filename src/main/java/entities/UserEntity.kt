@@ -1,25 +1,22 @@
 package entities
 
-import org.jetbrains.exposed.dao.EntityID
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.IntIdTable
-import java.io.Serializable
+import org.jetbrains.exposed.dao.*
 
 
-object Users : IntIdTable() {
+object Users : IntIdTable("user") {
+
     val userName = varchar("userName", 55)
-    val githubLink = varchar("githubLink", 255).nullable()
-    val photo = varchar("photo", 255).nullable()
+    val githubLink = varchar("githubLink", 255)
+    val photo = varchar("photo", 255)
     val description = varchar("description", 255)
 }
 
-class User(id: EntityID<Int>) : IntEntity(id), Serializable {
+class User(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<User>(Users)
 
     var userName: String by Users.userName
-    var githubLink: String? by Users.githubLink
-    var photo: String? by Users.photo
+    var githubLink: String by Users.githubLink
+    var photo: String by Users.photo
     var description by Users.description
     var badges by Badge via UsersBadges
 }
