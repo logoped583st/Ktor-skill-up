@@ -30,6 +30,7 @@ class JWTAuthorization {
 }
 
 fun Application.jwtAuth() {
+
     val jwtAuthorization: JWTAuthorization by kodein.instance()
     val issuer = environment.config.property("jwt.domain").getString()
     val audience = environment.config.property("jwt.audience").getString()

@@ -1,11 +1,11 @@
 import com.auth0.jwt.JWT
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.google.gson.GsonBuilder
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import controllers.auth.toHui
 import db.UserDao
 import di.kodein
-import endpoints.authorization.auth
+import controllers.authorization.auth
 import utils.JWTAuthorization
 import utils.jwtAuth
 import entities.Badges
@@ -19,6 +19,9 @@ import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.features.*
+import io.ktor.gson.GsonConverter
+import io.ktor.gson.gson
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
@@ -34,6 +37,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.generic.instance
+import java.text.DateFormat
 
 class Main {
     companion object {
@@ -65,7 +69,6 @@ private fun initDb() {
 
 fun Application.main() {
 
-    toHui
     initDb()
     jwtAuth()
     install(Compression)
@@ -76,6 +79,10 @@ fun Application.main() {
         header(HttpHeaders.XForwardedProto)
     }
     install(ContentNegotiation) {
+        gson {
+            setDateFormat(DateFormat.LONG)
+            setPrettyPrinting()
+        }
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
         }
@@ -89,7 +96,6 @@ fun Application.main() {
                     handle {
                         val principal = call.authentication.principal<JWTPrincipal>()
                         val subjectString = principal?.payload?.id.toString()
-
                         call.respondText("Success, $subjectString")
                     }
                 }

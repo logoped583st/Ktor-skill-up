@@ -4,6 +4,7 @@ import entities.Badge
 import entities.BadgeModel
 import entities.User
 import entities.UserModel
+import java.util.*
 
 fun toUserModel(user: User?): UserModel =
         user?.let {
@@ -19,8 +20,8 @@ fun toUserModel(user: User?): UserModel =
 fun toBadgeModel(badge: Badge): BadgeModel =
         BadgeModel(badge.badgeTitle,
                 badge.badgeDescription,
-                badge.badgeIcon,
-                badge.badgeDate.toDate()
+                badge.badgeIcon ?: " ",
+                badge.badgeDate?.toDate() ?: Date()
         )
 
 

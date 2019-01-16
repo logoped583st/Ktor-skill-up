@@ -40,4 +40,8 @@ class UserDao : BaseDAO<User, UserModel> {
         })
     }
 
+    fun findUserWithLogin(login: String): Boolean = transaction {
+        return@transaction User.find {Users.userName eq login}.firstOrNull() == null
+    }
+
 }

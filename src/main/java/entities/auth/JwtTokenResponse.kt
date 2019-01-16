@@ -12,5 +12,5 @@ fun JwtTokenHasher.stringlify(): String {
 }
 
 fun toJwtTokenHasher(tokenHash: String): JwtTokenHasher {
-    return jacksonObjectMapper().readValue<JwtTokenHasher>(tokenHash)
+    return jacksonObjectMapper().readValue(tokenHash)
 }

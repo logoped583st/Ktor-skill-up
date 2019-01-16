@@ -11,8 +11,8 @@ object Badges : IntIdTable() {
 
     val badgeTitle = varchar("badgeTitle", 55)
     val badgeDescription = varchar("badgeDescription", 255)
-    val badgeIcon = varchar("badgeIcon", 255)
-    val badgeDate = date("badgeData")
+    val badgeIcon = varchar("badgeIcon", 255).nullable()
+    val badgeDate = date("badgeData").nullable()
 }
 
 
@@ -27,8 +27,8 @@ class Badge(id: EntityID<Int>) : IntEntity(id) {
 }
 
 object UsersBadges : Table() {
-    val badgeId = reference("badgeId", Badges).primaryKey(0)
-    val userId = reference("userId", Users).primaryKey(1)
+    val badgeId = reference("badgeId", Badges).primaryKey(0).nullable()
+    val userId = reference("userId", Users).primaryKey(1).nullable()
 }
 
 
