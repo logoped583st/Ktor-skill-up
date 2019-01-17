@@ -101,8 +101,6 @@ fun Application.main() {
                 }
             }
             get("/get") {
-
-
                 call.respond(HttpStatusCode.OK, (UserDao().getData(1)))
             }
             get("/token") {

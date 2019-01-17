@@ -44,7 +44,7 @@ class AuthDao(private val environment: ApplicationEnvironment, val jwtAuthorizat
                     .withIssuer(issuer)
                     .withAudience(audience)
                     .withJWTId(id.value.toString())
-                    .withClaim("token", encodeToken(JwtTokenHasher(login, password, id.value.toString()).stringlify()))
+                    //.withClaim("token", encodeToken(JwtTokenHasher(login, password, id.value.toString()).stringlify()))
                     .sign(jwtAuthorization.algorithm)
         }.accessToken
 

@@ -29,7 +29,7 @@ fun Route.auth() {
                     call.respond(HttpStatusCode.OK, token)
                 }
             } catch (e: Exception) {
-                call.respond(AuthResponse.IncorrectBody("bad body"))
+                call.respond(AuthResponse.IncorrectBody())
             }
         }
     }
@@ -40,11 +40,11 @@ fun Route.auth() {
                 val model: AuthModel? = call.receive(AuthModel::class)
 
                 model?.let {
-                    val token = authService.registration(model.login, model.password)
+                    val token = authService.login(model.login, model.password)
                     call.respond(HttpStatusCode.OK, token)
                 }
             } catch (e: Exception) {
-                call.respond(AuthResponse.IncorrectBody("bad body"))
+                call.respond(AuthResponse.IncorrectBody())
             }
         }
     }
