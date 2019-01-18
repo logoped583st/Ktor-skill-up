@@ -10,7 +10,7 @@ import org.kodein.di.generic.singleton
 import services.AuthService
 import services.UserService
 
-val controllerComponent = Kodein.Module {
+val servicesComponent = Kodein.Module {
     bind<AuthService>() with factory { env: ApplicationEnvironment -> AuthService(AuthDao(env, instance()), instance()) }
     bind<UserService>() with singleton { UserService(instance()) }
 }
