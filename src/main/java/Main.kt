@@ -1,13 +1,11 @@
 import com.auth0.jwt.JWT
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.google.gson.GsonBuilder
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import controllers.authorization.auth
+import controllers.authorization.user
 import db.UserDao
 import di.kodein
-import controllers.authorization.auth
-import utils.JWTAuthorization
-import utils.jwtAuth
 import entities.Badges
 import entities.Credentials
 import entities.Users
@@ -19,12 +17,11 @@ import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.features.*
-import io.ktor.gson.GsonConverter
 import io.ktor.gson.gson
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
+import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
@@ -37,6 +34,8 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.generic.instance
+import utils.JWTAuthorization
+import utils.jwtAuth
 import java.text.DateFormat
 
 class Main {
@@ -72,6 +71,7 @@ fun Application.main() {
     initDb()
     jwtAuth()
     install(Compression)
+    install(Locations)
     install(DefaultHeaders)
     install(CORS) {
         anyHost()
@@ -91,31 +91,7 @@ fun Application.main() {
     install(Routing) {
         routing {
             auth()
-            authenticate {
-                route("/test") {
-                    handle {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val subjectString = principal?.payload?.id.toString()
-                        call.respondText("Success, $subjectString")
-                    }
-                }
-            }
-            get("/get") {
-                call.respond(HttpStatusCode.OK, (UserDao().getData(1)))
-            }
-            get("/token") {
-                val issuer = environment.config.property("jwt.domain").getString()
-                val audience = environment.config.property("jwt.audience").getString()
-                val jwtAuthorization: JWTAuthorization by kodein.instance()
-
-                val a = JWT.create()
-                        .withIssuer(issuer)
-                        .withAudience(audience)
-                        .withJWTId("test")
-                        .sign(jwtAuthorization.algorithm)
-
-                call.respondText { a }
-            }
+            user()
         }
     }
 }

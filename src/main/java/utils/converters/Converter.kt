@@ -3,18 +3,20 @@ package utils.converters
 import entities.Badge
 import entities.BadgeModel
 import entities.User
-import entities.UserModel
+import responses.UserResponse
 import java.util.*
 
-fun toUserModel(user: User?): UserModel =
+fun toUserModel(user: User?): UserResponse.UserModel? =
         user?.let {
-            UserModel(user.id.value,
+            UserResponse.UserModel(user.id.value,
+                    user.userName,
                     user.githubLink,
+                    user.isPrivate,
                     user.photo,
                     user.description,
                     user.badges.map { toBadgeModel(it) }
             )
-        }!!
+        }
 
 
 fun toBadgeModel(badge: Badge): BadgeModel =

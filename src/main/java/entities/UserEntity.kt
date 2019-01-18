@@ -13,6 +13,8 @@ object Users : IntIdTable("user") {
     val githubLink = varchar("githubLink", 255)
     val photo = varchar("photo", 255)
     val description = varchar("description", 255)
+    val isPrivate = bool("isPrivate")
+    val registrationDate = date("registrationDate")
 
 }
 
@@ -21,16 +23,13 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 
     var userName: String by Users.userName
     var githubLink: String by Users.githubLink
+    var isPrivate: Boolean by Users.isPrivate
     var photo: String by Users.photo
     var description by Users.description
     var badges: SizedIterable<Badge> by Badge via UsersBadges
+    var registrationDate by Users.registrationDate
 }
 
-data class UserModel(val id: Int,
-                     val githubLink: String?,
-                     val photo: String?,
-                     val description: String,
-                     val badges: List<BadgeModel>)
 
 
 

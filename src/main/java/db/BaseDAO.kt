@@ -1,6 +1,6 @@
 package db
 
-interface BaseDAO<Entity : Any, OutputEntity:Any> {
+interface BaseDAO<Entity : Any, OutputEntity:Any?> {
 
     fun insert(data: Entity): OutputEntity
 

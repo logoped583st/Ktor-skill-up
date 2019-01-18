@@ -2,7 +2,7 @@ package services
 
 import db.AuthDao
 import db.UserDao
-import exceptions.AuthResponse
+import responses.AuthResponse
 
 class AuthService(private val authDao: AuthDao, private val userDao: UserDao) {
 
