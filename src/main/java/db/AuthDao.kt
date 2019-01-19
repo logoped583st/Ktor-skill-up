@@ -1,9 +1,7 @@
 package db
 
 import com.auth0.jwt.JWT
-import entities.Credential
-import entities.Credentials
-import entities.User
+import entities.*
 import io.ktor.application.ApplicationEnvironment
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.and
@@ -29,9 +27,12 @@ class AuthDao(environment: ApplicationEnvironment, private val jwtAuthorization:
             this.githubLink = ""
             this.isPrivate = false
             this.registrationDate = DateTime.now()
+
         }
 
+
         user.badges = SizedCollection(emptyList())
+
 
         val token = Credential.new(user.id.value) {
             this.login = login

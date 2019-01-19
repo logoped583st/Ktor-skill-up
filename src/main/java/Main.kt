@@ -1,42 +1,30 @@
-import com.auth0.jwt.JWT
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import controllers.authorization.auth
-import controllers.authorization.user
-import db.UserDao
-import di.kodein
-import entities.Badges
-import entities.Credentials
-import entities.Users
-import entities.UsersBadges
+import controllers.authorization.githubAuth
+import controllers.user
+import entities.*
 import io.ktor.application.Application
-import io.ktor.application.call
+import io.ktor.application.ApplicationStopping
 import io.ktor.application.install
-import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
-import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.locations.Locations
-import io.ktor.response.respond
-import io.ktor.response.respondText
 import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.kodein.di.generic.instance
-import utils.JWTAuthorization
 import utils.jwtAuth
 import java.text.DateFormat
+
 
 class Main {
     companion object {
@@ -62,14 +50,24 @@ private fun initDb() {
     Database.connect(hikariDatabase)
 
     transaction {
-        SchemaUtils.create(UsersBadges, Users, Badges, Credentials)
+        SchemaUtils.create(UsersBadges, Users, Badges, Credentials, Skills)
     }
 }
 
 fun Application.main() {
+    main(
+            oauthHttpClient = HttpClient(Apache).apply {
+                environment.monitor.subscribe(ApplicationStopping) {
+                    close()
+                }
+            }
+    )
+}
+
+fun Application.main(oauthHttpClient: HttpClient) {
 
     initDb()
-    jwtAuth()
+    jwtAuth(oauthHttpClient)
     install(Compression)
     install(Locations)
     install(DefaultHeaders)
@@ -92,6 +90,7 @@ fun Application.main() {
         routing {
             auth()
             user()
+            githubAuth()
         }
     }
 }

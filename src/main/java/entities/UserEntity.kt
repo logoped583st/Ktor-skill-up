@@ -15,7 +15,6 @@ object Users : IntIdTable("user") {
     val description = varchar("description", 255)
     val isPrivate = bool("isPrivate")
     val registrationDate = date("registrationDate")
-
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {

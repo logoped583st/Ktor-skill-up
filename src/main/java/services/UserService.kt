@@ -11,6 +11,7 @@ class UserService(private val userDao: UserDao) {
         } catch (ex: NumberFormatException) {
             return UserResponse.IncorrectBody()
         }
+
         return userDao.getData(intId) ?: UserResponse.NotFound()
     }
 
@@ -21,6 +22,7 @@ class UserService(private val userDao: UserDao) {
             return UserResponse.IncorrectBody()
         }
         val user = userDao.getUserWithIdIfIsNotPrivate(intId)
+
         user?.let {
             return if (it.isPrivate) {
                 UserResponse.Forbidden()

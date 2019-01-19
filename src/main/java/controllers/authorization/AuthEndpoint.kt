@@ -3,6 +3,8 @@ package controllers.authorization
 import di.kodein
 import entities.locations.AuthModel
 import io.ktor.application.call
+import io.ktor.http.HttpMethod
+import io.ktor.locations.locations
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -18,6 +20,9 @@ fun Route.auth() {
 
     val authService: AuthService by kodein.instance(arg = application.environment)
 
+    route("/test", HttpMethod.Get) {
+        application.locations.href(Login("github"))
+    }
     route("/registration") {
         post {
             try {
