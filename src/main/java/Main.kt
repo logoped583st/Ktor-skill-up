@@ -4,24 +4,29 @@ import com.zaxxer.hikari.HikariDataSource
 import controllers.authorization.auth
 import controllers.authorization.githubAuth
 import controllers.user
+import di.kodein
 import entities.*
 import io.ktor.application.Application
 import io.ktor.application.ApplicationStopping
+import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
 import io.ktor.jackson.jackson
 import io.ktor.locations.Locations
+import io.ktor.response.respondText
 import io.ktor.routing.Routing
+import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.kodein.di.generic.instance
 import utils.jwtAuth
 import java.text.DateFormat
 
@@ -55,19 +60,16 @@ private fun initDb() {
 }
 
 fun Application.main() {
-    main(
-            oauthHttpClient = HttpClient(Apache).apply {
-                environment.monitor.subscribe(ApplicationStopping) {
-                    close()
-                }
-            }
-    )
-}
 
-fun Application.main(oauthHttpClient: HttpClient) {
+    val httpClient: HttpClient by kodein.instance()
+    httpClient.apply {
+        environment.monitor.subscribe(ApplicationStopping) {
+            close()
+        }
+    }
 
     initDb()
-    jwtAuth(oauthHttpClient)
+    jwtAuth(httpClient)
     install(Compression)
     install(Locations)
     install(DefaultHeaders)
@@ -90,7 +92,12 @@ fun Application.main(oauthHttpClient: HttpClient) {
         routing {
             auth()
             user()
-            githubAuth()
+            githubAuth(httpClient)
+            route("/home") {
+                get {
+                    call.respondText { "Success" }
+                }
+            }
         }
     }
 }
