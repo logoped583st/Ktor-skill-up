@@ -12,10 +12,10 @@ sealed class AuthResponse(open val codeResult: HttpStatusCode, open val data: An
     data class IncorrectBody(override val data: ErrorMessage = ErrorMessage("Incorrect body"),
                              val errorCode: HttpStatusCode = HttpStatusCode.BadRequest) : AuthResponse(errorCode, data)
 
-    data class UserNotRegistered(override val data: ErrorMessage = ErrorMessage("Incorrect Login or password"),
+    data class UserNotRegistered(override val data: ErrorMessage = ErrorMessage("Incorrect GithubLogin or password"),
                                  val errorCode: HttpStatusCode = HttpStatusCode.Conflict) : AuthResponse(errorCode, data)
 
-    data class BadLogin(override val data: ErrorMessage = ErrorMessage("Login to small"),
+    data class BadLogin(override val data: ErrorMessage = ErrorMessage("GithubLogin to small"),
                         val errorCode: HttpStatusCode = HttpStatusCode.BadRequest) : AuthResponse(errorCode, data)
 
     data class BadPassword(override val data: ErrorMessage = ErrorMessage(

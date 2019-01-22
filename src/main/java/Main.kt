@@ -55,7 +55,9 @@ private fun initDb() {
     Database.connect(hikariDatabase)
 
     transaction {
-        SchemaUtils.create(UsersBadges, Users, Badges, Credentials, Skills)
+        SchemaUtils.create(UsersBadges, Users, Badges,
+                Credentials, Skills, Polls, Posts, GithubActivities, Activities,
+                PollAnswers, PollUsersAnswers)
     }
 }
 

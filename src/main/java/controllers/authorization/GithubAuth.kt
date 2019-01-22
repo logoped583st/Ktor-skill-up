@@ -21,7 +21,7 @@ import io.ktor.routing.param
 import kotlinx.coroutines.async
 
 @Location("/login/{type?}")
-data class Login(val type: String?)
+data class GithubLogin(val type: String?)
 
 
 @Location("/login/github")
@@ -48,22 +48,22 @@ val loginProvider =
 fun Route.githubAuth(httpClient: HttpClient) {
 
     get<GithubCode> {
-
         val httpRequestBuilder = HttpRequestBuilder()
         httpRequestBuilder.url("https://github.com/login/oauth/access_token?client_id=9442240ec9efb0c18c25" +
                 "&client_secret=bfd644b98395e2532b93460411a8eb8b9f945980&code=${it.code}")
         httpRequestBuilder.header("Accept", "application/json")
-        val req1 = async { httpClient.call(httpRequestBuilder).response.receive<GithubToken>() }
+        val req1 = async { httpClient.call(httpRequestBuilder).response.receive<GithubToken>() } // TODO handle error
         val res = req1.await()
         call.respondText { res.toString() }
     }
 
     authenticate("gitHubOAuth") {
-        location<Login> {
+        location<GithubLogin> {
             param("error") {
                 handle {
                     call.respondText { call.parameters.getAll("error").toString() }
                 }
+
             }
 
             handle {

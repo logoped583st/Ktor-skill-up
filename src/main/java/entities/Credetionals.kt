@@ -4,8 +4,8 @@ import org.jetbrains.exposed.dao.*
 
 
 object Credentials : IdTable<Int>("credential") {
-    override val id = Credentials.reference("id", Users)
-    val login = varchar("Login", 55)
+    override val id = reference("id", Users)
+    val login = varchar("GithubLogin", 55)
     val password = varchar("password", 255)
     val accessToken = varchar("accessToken", 500)
     val githubAccessToken = varchar("githubAccessToken", 255).nullable()

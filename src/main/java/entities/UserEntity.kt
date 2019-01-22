@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.SizedIterable
 
 
-object Users : IntIdTable("user") {
+object Users : IntIdTable() {
 
     val userName = varchar("userName", 55).uniqueIndex("userName")
     val githubLink = varchar("githubLink", 255)

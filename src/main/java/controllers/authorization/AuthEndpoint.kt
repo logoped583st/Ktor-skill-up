@@ -21,7 +21,7 @@ fun Route.auth() {
     val authService: AuthService by kodein.instance(arg = application.environment)
 
     route("/test", HttpMethod.Get) {
-        application.locations.href(Login("github"))
+        application.locations.href(GithubLogin("github"))
     }
     route("/registration") {
         post {

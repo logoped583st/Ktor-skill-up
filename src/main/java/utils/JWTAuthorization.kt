@@ -3,7 +3,7 @@ package utils
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
-import controllers.authorization.Login
+import controllers.authorization.GithubLogin
 import controllers.authorization.loginProvider
 import di.kodein
 import io.ktor.application.Application
@@ -45,7 +45,7 @@ fun Application.jwtAuth(oauthHttpClient: HttpClient) {
         oauth("gitHubOAuth") {
             client = oauthHttpClient
             providerLookup = { loginProvider }
-            urlProvider = { url(Login(it.name)) }
+            urlProvider = { url(GithubLogin(it.name)) }
         }
         val jwtVerifier =jwtAuthorization.makeJwtVerifier(issuer, audience)
         jwt {
