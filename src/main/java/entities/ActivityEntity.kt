@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.Table
 object Activities : IntIdTable() {
     val table = varchar("tableName", 255)
     val userId = reference("userId", Users.id)
+    val createdDate = date("createdDate")
 }
 
 

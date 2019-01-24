@@ -57,7 +57,7 @@ private fun initDb() {
     transaction {
         SchemaUtils.create(UsersBadges, Users, Badges,
                 Credentials, Skills, Polls, Posts, GithubActivities, Activities,
-                PollAnswers, PollUsersAnswers)
+                PollAnswers, PollUsersAnswers, Attachments, ActivityAttachemts)
     }
 }
 
