@@ -19,37 +19,31 @@ class Activity(id: EntityID<Int>) : IntEntity(id) {
 }
 
 object Polls : IdTable<Int>() {
-    override val id: Column<EntityID<Int>> = reference("id", Activities)
-
+    override val id: Column<EntityID<Int>> = reference("id", Activities).primaryKey()
     val title = varchar("pollTitle", 55)
     val description = varchar("pollDescription",255)
 
 }
 
-object PollAnswers : IdTable<Int>() {
-    override val id: Column<EntityID<Int>> = reference("id", Polls)
-    val answer = varchar("pollAnswer", 55)
-
+object PollAnswers : IntIdTable() {
+    val title = varchar("answer",55)
+    val poll = reference("pollId",Polls)
 }
+
 
 class PollAnswer(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<PollAnswer>(PollAnswers)
-    var usersVoted: SizedIterable<User> by User via PollUsersAnswers
-}
-
-class Poll(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<Poll>(Polls)
-
 
 }
 
-object PollUsersAnswers : Table() {
-    val pollAnswerId = reference("pollAnswerId", PollAnswers).primaryKey(0).nullable()
-    val userId = reference("userAnsweredId", Users).primaryKey(1).nullable()
+
+object PollUsersAnswers : IntIdTable() {
+    val userId = reference("userAnsweredId", Users)
+    val pollAnswerId = reference("pollAnswerId", PollAnswers)
 }
 
 object Posts : IdTable<Int>() {
-    override val id: Column<EntityID<Int>> = reference("id", Activities)
+    override val id: Column<EntityID<Int>> = reference("id", Activities).primaryKey()
     val title = varchar("postTitle", 55)
 
 }
@@ -61,7 +55,7 @@ class Post(id: EntityID<Int>) : IntEntity(id) {
 
 
 object GithubActivities : IdTable<Int>() {
-    override val id: Column<EntityID<Int>> = reference("id", Activities)
+    override val id: Column<EntityID<Int>> = reference("id", Activities).primaryKey()
     val title = varchar("githubTitle", 55)
 
 }

@@ -5,6 +5,7 @@ import entities.locations.AuthModel
 import io.ktor.application.call
 import io.ktor.http.HttpMethod
 import io.ktor.locations.locations
+import io.ktor.request.ContentTransformationException
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -20,28 +21,32 @@ fun Route.auth() {
 
     val authService: AuthService by kodein.instance(arg = application.environment)
 
+
+
     route("/test", HttpMethod.Get) {
         application.locations.href(GithubLogin("github"))
     }
-    route("/registration") {
-        post {
-            try {
-                val model: AuthModel? = call.receive(AuthModel::class)
 
-                model?.let {
-                    val authResponse = authService.registration(model.login, model.password)
-                    call.respond(authResponse.codeResult, authResponse.data)
-                }
-            } catch (e: Exception) {
-                call.respond(AuthResponse.IncorrectBody())
+    post("/registration") {
+
+        try {
+            val model: AuthModel? = call.receive()
+
+            model?.let {
+                val authResponse = authService.registration(model.login, model.password)
+                call.respond(authResponse.codeResult, authResponse.data)
             }
+        } catch (e: ContentTransformationException) {
+            print(e.message)
+            call.respond(AuthResponse.IncorrectBody())
         }
+
     }
 
     route("/authorization") {
         post {
             try {
-                val model: AuthModel? = call.receive(AuthModel::class)
+                val model: AuthModel? = call.receive()
 
                 model?.let {
                     val authResponse = authService.login(model.login, model.password)

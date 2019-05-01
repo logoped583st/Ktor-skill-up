@@ -13,12 +13,15 @@ import utils.hash
 
 const val USER_DEFAULT_PHOTO = "https://www.teksteshqip.com/img_upz/galeri_full/157/157947.jpg"
 
-class AuthDao(environment: ApplicationEnvironment, private val jwtAuthorization: JWTAuthorization) {
+class AuthDao(private val environment: ApplicationEnvironment, private val jwtAuthorization: JWTAuthorization) {
+
 
     private val issuer = environment.config.property("jwt.domain").getString()
     private val audience = environment.config.property("jwt.audience").getString()
 
     fun registration(login: String, password: String): AuthResponse.Token = transaction {
+
+        print (environment.config.toString())
 
         val user = User.new {
             this.userName = login
@@ -27,7 +30,6 @@ class AuthDao(environment: ApplicationEnvironment, private val jwtAuthorization:
             this.githubLink = ""
             this.isPrivate = false
             this.registrationDate = DateTime.now()
-
         }
 
 

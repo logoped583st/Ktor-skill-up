@@ -13,7 +13,7 @@ object Attachments : IntIdTable() {
 }
 
 enum class AttachmentType {
-   PHOTO,
+    PHOTO,
     VIDEO,
     SOUND,
 }
@@ -26,7 +26,7 @@ class Attachment(id: EntityID<Int>) : IntEntity(id) {
     val link by Attachments.link
 }
 
-object ActivityAttachemts : Table() {
-    val attachmentId = reference("attachmentId", Attachments).primaryKey(0).nullable()
-    val activityId = reference("activityId", Activities).primaryKey(1).nullable()
+object ActivityAttachemts : IntIdTable() {
+    val attachmentId = reference("attachmentId", Attachments)
+    val activityId = reference("activityId", Activities)
 }

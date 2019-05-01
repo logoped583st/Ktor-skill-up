@@ -1,6 +1,8 @@
 package responses
 
+import entities.Badge
 import entities.BadgeModel
+import entities.Skill
 import entities.SkillModel
 import io.ktor.http.HttpStatusCode
 
@@ -18,8 +20,8 @@ sealed class UserResponse {
                          val isPrivate: Boolean,
                          val photo: String?,
                          val description: String,
-                         val skills: List<SkillModel>,
-                         val badges: List<BadgeModel>) : UserResponse()
+                         val skills: List<Skill>,
+                         val badges: List<Badge>) : UserResponse()
 
     data class IncorrectBody(val message: String = "Incorrect body", val errorCode: HttpStatusCode = HttpStatusCode.BadRequest) : UserResponse()
 

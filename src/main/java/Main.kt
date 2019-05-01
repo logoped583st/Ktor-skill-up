@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import controllers.authorization.auth
@@ -11,8 +12,8 @@ import io.ktor.application.ApplicationStopping
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.client.HttpClient
+import io.ktor.config.HoconApplicationConfig
 import io.ktor.features.*
-import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
 import io.ktor.jackson.jackson
 import io.ktor.locations.Locations
@@ -21,23 +22,31 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import io.ktor.server.engine.ApplicationEngineEnvironment
+import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.generic.instance
 import utils.jwtAuth
-import java.text.DateFormat
 
 
 class Main {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            embeddedServer(Netty, port = 8080) {
-                main()
-            }.start(wait = true)
+            embeddedServer(Netty,applicationEngineEnvironment{
+                config = HoconApplicationConfig(ConfigFactory.load())
+                module { main() }
+                connector{
+                    host = config.property("ktor.debug.host").getString()
+                    port = config.property("ktor.debug.port").getString().toInt()
+                }
+            }).start(true)
         }
     }
 }
@@ -45,9 +54,9 @@ class Main {
 
 private fun initDb() {
     val config = HikariConfig()
-    config.driverClassName = "org.h2.Driver"
-    config.jdbcUrl = "jdbc:h2:tcp://localhost/~/db/logopedServer"
-    config.username = "logoped"
+    config.driverClassName = "org.postgresql.Driver"
+    config.jdbcUrl = "jdbc:postgresql://localhost:5432/skill_up"
+    config.username = "ws-071-11b"
     config.maximumPoolSize = 3
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
     config.validate()
@@ -57,7 +66,7 @@ private fun initDb() {
     transaction {
         SchemaUtils.create(UsersBadges, Users, Badges,
                 Credentials, Skills, Polls, Posts, GithubActivities, Activities,
-                PollAnswers, PollUsersAnswers, Attachments, ActivityAttachemts)
+                PollUsersAnswers,PollAnswers, Attachments, ActivityAttachemts)
     }
 }
 
@@ -69,7 +78,11 @@ fun Application.main() {
             close()
         }
     }
+       print("CONFIG ${environment.log.name}")
+     val issuer = environment.config.property("ktor.deployment.port").getString()
+     val audience = environment.config.property("jwt.audience").getString()
 
+    print("$issuer  $audience")
     initDb()
     jwtAuth(httpClient)
     install(Compression)
@@ -79,12 +92,10 @@ fun Application.main() {
         anyHost()
         header(HttpHeaders.AccessControlAllowOrigin)
         header(HttpHeaders.XForwardedProto)
+        header(HttpHeaders.AccessControlAllowHeaders)
+        header(HttpHeaders.ContentType)
     }
     install(ContentNegotiation) {
-        gson {
-            setDateFormat(DateFormat.LONG)
-            setPrettyPrinting()
-        }
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
         }

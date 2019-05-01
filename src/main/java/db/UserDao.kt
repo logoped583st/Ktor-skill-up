@@ -19,7 +19,7 @@ class UserDao {
 
     fun getData(id: Int): UserModel? = transaction {
         val skills = Skill.find { Skills.user eq id }.toList()
-        return@transaction toUserModel(User.findById(id), skills)
+        return@transaction toUserModel(User[id], skills)
     }
 
     fun getUserWithIdIfIsNotPrivate(id: Int): UserModel? = transaction {

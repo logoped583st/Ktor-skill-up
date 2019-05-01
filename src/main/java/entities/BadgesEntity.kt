@@ -12,7 +12,7 @@ object Badges : IntIdTable() {
     val badgeTitle = varchar("badgeTitle", 55)
     val badgeDescription = varchar("badgeDescription", 255)
     val badgeIcon = varchar("badgeIcon", 255).nullable()
-    val badgeDate = date("badgeData").nullable()
+    val badgeDate = datetime("badgeData").nullable()
 }
 
 
