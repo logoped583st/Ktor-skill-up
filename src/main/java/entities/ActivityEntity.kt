@@ -1,33 +1,46 @@
 package entities
 
-import org.jetbrains.exposed.dao.*
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.SizedIterable
+import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.Table
+import org.postgresql.util.PGobject
 
 object Activities : IntIdTable() {
-    val table = varchar("tableName", 255)
     val userId = reference("userId", Users.id)
     val createdDate = date("createdDate")
+    //val polls = reference("polls", Polls).nullable()
+    //val githubAcitvity = reference("githubActivities", GithubActivities).nullable()
 }
 
 
 class Activity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Activity>(Activities)
 
-    var tableName by Activities.table
+    val userId by Activities.userId
+    val createdDate by Activities.createdDate
+
+    val poll by Poll optionalBackReferencedOn  (Polls.activityId)
+    val post by Post optionalBackReferencedOn(Posts.activityId)
 }
 
-object Polls : IdTable<Int>() {
-    override val id: Column<EntityID<Int>> = reference("id", Activities).primaryKey()
-    val title = varchar("pollTitle", 55)
-    val description = varchar("pollDescription",255)
+object Polls : IntIdTable() {
+    var title = varchar("pollTitle", 55)
+    var description = varchar("pollDescription", 255)
+    var activityId = reference("activityId", Activities.id)
+
+}
+
+class Poll(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<Poll>(Polls)
+
 
 }
 
 object PollAnswers : IntIdTable() {
-    val title = varchar("answer",55)
-    val poll = reference("pollId",Polls)
+    val title = varchar("answer", 55)
+    val poll = reference("pollId", Polls.id)
 }
 
 
@@ -42,10 +55,9 @@ object PollUsersAnswers : IntIdTable() {
     val pollAnswerId = reference("pollAnswerId", PollAnswers)
 }
 
-object Posts : IdTable<Int>() {
-    override val id: Column<EntityID<Int>> = reference("id", Activities).primaryKey()
+object Posts : IntIdTable() {
     val title = varchar("postTitle", 55)
-
+    val activityId = reference("activityId", Activities.id)
 }
 
 class Post(id: EntityID<Int>) : IntEntity(id) {
@@ -54,15 +66,40 @@ class Post(id: EntityID<Int>) : IntEntity(id) {
 }
 
 
-object GithubActivities : IdTable<Int>() {
-    override val id: Column<EntityID<Int>> = reference("id", Activities).primaryKey()
+object GithubActivities : IntIdTable() {
     val title = varchar("githubTitle", 55)
-
+    val activityId = reference("activityId", Activities.id)
 }
 
 class GithubAcitvity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<GithubAcitvity>(GithubActivities)
 
 }
+
+
+class PGEnum<T : Enum<T>>(enumTypeName: String, enumValue: T?) : PGobject() {
+    init {
+        value = enumValue?.name
+        type = enumTypeName
+    }
+}
+
+
+enum class ActivityTypes(type: String) {
+    POLS("POLLS"),
+    POST("POST"),
+    GITHUB("GITHUB")
+}
+
+fun getTable(type: ActivityTypes): String {
+    return when (type) {
+
+        ActivityTypes.POST -> "ASD"
+        ActivityTypes.GITHUB -> "DAS"
+        else -> "DASD"
+    }
+}
+
+
 
 

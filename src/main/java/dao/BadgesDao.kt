@@ -1,4 +1,4 @@
-package db
+package dao
 
 import entities.*
 import org.jetbrains.exposed.sql.deleteWhere

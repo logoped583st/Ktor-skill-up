@@ -32,7 +32,9 @@ object UsersBadges : Table() {
 }
 
 
-data class BadgeModel(val badgeTitle: String,
-                      val badgeDescription: String,
-                      val badgeIcon: String,
-                      val badgeData: Date)
+data class BadgeModel(
+        val id:Int,
+        val badgeTitle: String,
+        val badgeDescription: String,
+        val badgeIcon: String,
+        val badgeData: Date)

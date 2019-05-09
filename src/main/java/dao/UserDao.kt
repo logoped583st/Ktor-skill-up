@@ -1,4 +1,4 @@
-package db
+package dao
 
 import entities.Skill
 import entities.Skills

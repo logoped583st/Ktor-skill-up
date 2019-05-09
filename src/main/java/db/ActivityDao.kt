@@ -1,5 +1,0 @@
-package db
-
-class ActivityDao {
-
-}

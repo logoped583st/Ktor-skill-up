@@ -1,4 +1,4 @@
-package db
+package dao
 
 import com.auth0.jwt.JWT
 import entities.*

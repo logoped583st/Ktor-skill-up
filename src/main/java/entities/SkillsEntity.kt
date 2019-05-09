@@ -38,4 +38,4 @@ class Skill(id: EntityID<Int>) : IntEntity(id) {
     var user by User referencedOn Skills.user
 }
 
-data class SkillModel(val title: String, val description: String, val skillLevel: SkillLevel)
+data class SkillModel(val id: Int, val title: String, val description: String, val skillLevel: SkillLevel)

@@ -1,4 +1,4 @@
-package db
+package dao
 
 import entities.Skill
 import entities.SkillModel
@@ -26,18 +26,17 @@ class SkillsDao {
     }
 
     fun updateSkill(userId: Int, skill: Skill): Skill = transaction {
-        Skill[skill.id].run {
-            this.title = skill.title
-            this.description = skill.description
-            this.skillLevel = skill.skillLevel
-            this.user = User[userId]
+        return@transaction Skill[skill.id].apply {
+            title = skill.title
+            description = skill.description
+            skillLevel = skill.skillLevel
+            user = User[userId]
         }
-        return@transaction skill
     }
 
     fun deleteSkill(userId: Int, skillId: Int): List<Skill> {
         Skills.deleteWhere { (Skills.id eq skillId) and (Skills.user eq userId) }
-        return Skill.find { (Skills.id eq userId) }.toList()
+        return Skill.find { (Skills.user eq userId) }.toList()
     }
 
 

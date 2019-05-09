@@ -29,16 +29,20 @@ fun toSimpleUserMode(user: User?): UserResponse.SimpleUserModel? =
         }
 
 
-fun toBadgeModel(badge: Badge): BadgeModel =
-        BadgeModel(badge.badgeTitle,
-                badge.badgeDescription,
-                badge.badgeIcon ?: " ",
-                badge.badgeDate?.toDate() ?: Date()
+fun Badge.toBadgeModel(): BadgeModel =
+        BadgeModel(
+                id.value,
+                badgeTitle,
+                badgeDescription,
+                badgeIcon ?: " ",
+                badgeDate?.toDate() ?: Date()
         )
 
-fun toSkillModel(skill: Skill): SkillModel =
-        SkillModel(skill.title,
-                skill.description,
-                skill.skillLevel)
+fun Skill.toSkillModel(): SkillModel =
+        SkillModel(
+                id.value,
+                title,
+                description,
+                skillLevel)
 
 

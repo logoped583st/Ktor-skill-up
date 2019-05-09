@@ -1,7 +1,7 @@
 package di
 
-import db.AuthDao
-import db.UserDao
+import dao.AuthDao
+import dao.UserDao
 import io.ktor.application.ApplicationEnvironment
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind

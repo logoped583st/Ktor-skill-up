@@ -1,6 +1,6 @@
 package services
 
-import db.UserDao
+import dao.UserDao
 import responses.UserResponse
 
 class UserService(private val userDao: UserDao) {
