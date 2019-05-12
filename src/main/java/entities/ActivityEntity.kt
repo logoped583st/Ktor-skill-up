@@ -4,43 +4,47 @@ import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.IntIdTable
-import org.jetbrains.exposed.sql.Table
 import org.postgresql.util.PGobject
 
 object Activities : IntIdTable() {
     val userId = reference("userId", Users.id)
     val createdDate = date("createdDate")
-    //val polls = reference("polls", Polls).nullable()
-    //val githubAcitvity = reference("githubActivities", GithubActivities).nullable()
+    val type = customEnumeration("type", "activityType", { value -> ActivityTypes.valueOf(value as String) }, { PGEnum("activityType", it) })
 }
 
 
 class Activity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Activity>(Activities)
 
-    val userId by Activities.userId
-    val createdDate by Activities.createdDate
+    var userId by User referencedOn Activities.userId
+    var createdDate by Activities.createdDate
 
-    val poll by Poll optionalBackReferencedOn  (Polls.activityId)
-    val post by Post optionalBackReferencedOn(Posts.activityId)
+
+    var type by Activities.type
+    val poll by Poll optionalBackReferencedOn (Polls.activityId)
+    val post by Post optionalBackReferencedOn (Posts.activityId)
 }
 
 object Polls : IntIdTable() {
-    var title = varchar("pollTitle", 55)
-    var description = varchar("pollDescription", 255)
-    var activityId = reference("activityId", Activities.id)
+    val title = varchar("pollTitle", 55)
+    val description = varchar("pollDescription", 255)
+    val activityId = reference("activityId", Activities.id)
 
 }
 
 class Poll(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Poll>(Polls)
 
+    var title by Polls.title
+    var description by Polls.description
+    var activityId by Polls.activityId
 
 }
 
 object PollAnswers : IntIdTable() {
     val title = varchar("answer", 55)
     val poll = reference("pollId", Polls.id)
+
 }
 
 
@@ -57,12 +61,16 @@ object PollUsersAnswers : IntIdTable() {
 
 object Posts : IntIdTable() {
     val title = varchar("postTitle", 55)
+    val description = varchar("postDescription", 55)
     val activityId = reference("activityId", Activities.id)
 }
 
 class Post(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Post>(Posts)
 
+    var title by Posts.title
+    var description by Posts.description
+    var activityId by Posts.activityId
 }
 
 

@@ -125,7 +125,7 @@ fun Application.main() {
             githubAuth(httpClient)
             route("/home") {
                 get {
-                    call.respond(HttpStatusCode.OK,activity.getActivities())
+                   // call.respond(HttpStatusCode.OK,activity.getActivities())
                 }
             }
         }
