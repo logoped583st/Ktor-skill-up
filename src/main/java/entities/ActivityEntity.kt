@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.IntIdTable
 import org.postgresql.util.PGobject
 
 object Activities : IntIdTable() {
-    val userId = reference("userId", Users.id)
+    val userId = reference("userId", Users)
     val createdDate = date("createdDate")
     val type = customEnumeration("type", "activityType", { value -> ActivityTypes.valueOf(value as String) }, { PGEnum("activityType", it) })
 }
@@ -28,7 +28,7 @@ class Activity(id: EntityID<Int>) : IntEntity(id) {
 object Polls : IntIdTable() {
     val title = varchar("pollTitle", 55)
     val description = varchar("pollDescription", 255)
-    val activityId = reference("activityId", Activities.id)
+    val activityId = reference("activity", Activities)
 
 }
 
@@ -37,7 +37,7 @@ class Poll(id: EntityID<Int>) : IntEntity(id) {
 
     var title by Polls.title
     var description by Polls.description
-    var activityId by Polls.activityId
+    var activityId by Activity referencedOn Polls.id
 
 }
 
@@ -62,7 +62,7 @@ object PollUsersAnswers : IntIdTable() {
 object Posts : IntIdTable() {
     val title = varchar("postTitle", 55)
     val description = varchar("postDescription", 55)
-    val activityId = reference("activityId", Activities.id)
+    val activityId = reference("activity", Activities)
 }
 
 class Post(id: EntityID<Int>) : IntEntity(id) {
@@ -70,13 +70,13 @@ class Post(id: EntityID<Int>) : IntEntity(id) {
 
     var title by Posts.title
     var description by Posts.description
-    var activityId by Posts.activityId
+    var activityId by Activity referencedOn Posts.activityId
 }
 
 
 object GithubActivities : IntIdTable() {
     val title = varchar("githubTitle", 55)
-    val activityId = reference("activityId", Activities.id)
+    val activityId = reference("activity", Activities.id)
 }
 
 class GithubAcitvity(id: EntityID<Int>) : IntEntity(id) {
@@ -99,14 +99,7 @@ enum class ActivityTypes(type: String) {
     GITHUB("GITHUB")
 }
 
-fun getTable(type: ActivityTypes): String {
-    return when (type) {
 
-        ActivityTypes.POST -> "ASD"
-        ActivityTypes.GITHUB -> "DAS"
-        else -> "DASD"
-    }
-}
 
 
 

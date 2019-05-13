@@ -2,6 +2,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import controllers.activities
 import controllers.authorization.auth
 import controllers.authorization.githubAuth
 import controllers.user
@@ -116,12 +117,12 @@ fun Application.main() {
         }
     }
 
-    val activity = ActivityDao()
     install(CallLogging)
     install(Routing) {
         routing {
             auth()
             user()
+            activities()
             githubAuth(httpClient)
             route("/home") {
                 get {
