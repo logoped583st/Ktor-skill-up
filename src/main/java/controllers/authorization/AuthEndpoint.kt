@@ -46,13 +46,14 @@ fun Route.auth() {
     route("/authorization") {
         post {
             try {
-                val model: AuthModel? = call.receive()
-
-                model?.let {
+                val model: AuthModel = call.receive()
+                model.let {
+                    println(model.login + model.password)
                     val authResponse = authService.login(model.login, model.password)
-                    call.respond(authResponse.codeResult, authResponse.data)
+                    call.respond(authResponse.codeResult,authResponse.data)
                 }
             } catch (e: Exception) {
+                println(e.message)
                 call.respond(AuthResponse.IncorrectBody())
             }
         }

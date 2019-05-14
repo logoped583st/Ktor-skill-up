@@ -30,7 +30,7 @@ class AuthService(private val authDao: AuthDao, private val userDao: UserDao) {
 
         return authDao.login(login, password).let {
             if (it != null) {
-                AuthResponse.TokenResponse(it)
+                AuthResponse.TokenResponse(AuthResponse.Token(it.token))
             } else {
                 AuthResponse.UserNotRegistered()
             }

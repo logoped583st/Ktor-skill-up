@@ -58,7 +58,7 @@ fun Route.githubAuth(httpClient: HttpClient) {
     }
 
     authenticate("gitHubOAuth") {
-        location<GithubLogin> {
+            location<GithubLogin> {
             param("error") {
                 handle {
                     call.respondText { call.parameters.getAll("error").toString() }

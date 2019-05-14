@@ -18,6 +18,7 @@ import io.ktor.config.HoconApplicationConfig
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.locations.Locations
@@ -60,7 +61,7 @@ private fun initDb() {
     val config = HikariConfig()
     config.driverClassName = "org.postgresql.Driver"
     config.jdbcUrl = "jdbc:postgresql://localhost:5432/skill_up"
-    config.username = "ws-071-11b"
+    config.username = "postgres"
     config.maximumPoolSize = 3
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
     config.validate()
@@ -98,19 +99,29 @@ fun Application.main() {
     jwtAuth(httpClient)
     install(Compression)
     install(Locations)
-    install(DefaultHeaders)
+    install(DefaultHeaders){
+        this.header("'Access-Control-Allow-Origin", "*")
+    }
     install(CORS) {
         anyHost()
-        header(HttpHeaders.AccessControlAllowOrigin)
-        header(HttpHeaders.XForwardedProto)
+        method(HttpMethod.Get)
         header(HttpHeaders.AccessControlAllowHeaders)
-        header(HttpHeaders.ContentType)
+        header(HttpHeaders.AccessControlAllowCredentials)
+        header(HttpHeaders.Authorization)
+        header(HttpHeaders.AccessControlAllowOrigin)
+        header(HttpHeaders.Location)
+        method(HttpMethod.Delete)
+        method(HttpMethod.Put)
+
+        allowSameOrigin = true
+
+
     }
     install(ContentNegotiation) {
         gson {
             setDateFormat(DateFormat.LONG)
-            setPrettyPrinting()
-            excludeFieldsWithModifiers(Modifier.TRANSIENT)
+            //  setPrettyPrinting()
+            //  excludeFieldsWithModifiers(Modifier.TRANSIENT)
         }
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
@@ -126,7 +137,7 @@ fun Application.main() {
             githubAuth(httpClient)
             route("/home") {
                 get {
-                   // call.respond(HttpStatusCode.OK,activity.getActivities())
+                    // call.respond(HttpStatusCode.OK,activity.getActivities())
                 }
             }
         }

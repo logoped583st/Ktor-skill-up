@@ -12,8 +12,8 @@ fun toUserModel(user: User?, skill: List<Skill>): UserResponse.UserModel? =
                     user.isPrivate,
                     user.photo,
                     user.description,
-                    skill,
-                    user.badges.toList()
+                    skill.map { it.toSkillModel() },
+                    user.badges.map { it.toBadgeModel() }
             )
         }
 

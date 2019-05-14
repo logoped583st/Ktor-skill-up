@@ -43,7 +43,7 @@ class Poll(id: EntityID<Int>) : IntEntity(id) {
 
 object PollAnswers : IntIdTable() {
     val title = varchar("answer", 55)
-    val poll = reference("pollId", Polls.id)
+    val poll = reference("pollId", Polls)
 
 }
 
@@ -93,10 +93,21 @@ class PGEnum<T : Enum<T>>(enumTypeName: String, enumValue: T?) : PGobject() {
 }
 
 
-enum class ActivityTypes(type: String) {
-    POLS("POLLS"),
-    POST("POST"),
-    GITHUB("GITHUB")
+enum class ActivityTypes {
+    POLS,
+    POST,
+    GITHUB;
+
+
+}
+
+fun getType(string: String): ActivityTypes {
+    return when(string){
+        "POLLS" -> ActivityTypes.POLS
+        "POST" -> ActivityTypes.POST
+        "GITHUB" -> ActivityTypes.GITHUB
+        else -> ActivityTypes.POST
+    }
 }
 
 

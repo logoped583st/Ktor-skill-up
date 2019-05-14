@@ -4,13 +4,17 @@ import entities.Activity
 import entities.ActivityTypes
 import entities.Poll
 import entities.Post
+import org.jetbrains.exposed.sql.transactions.transaction
 import responses.ActivityResponse
 
 fun Activity.toBaseActivity(): ActivityResponse.ActivityModel<ActivityResponse.BaseActivity> {
-    return when (this.type) {
-        ActivityTypes.POLS -> ActivityResponse.ActivityModel(this.id.value, this.createdDate.toDate(), this.poll?.toPollModel())
-        ActivityTypes.POST -> ActivityResponse.ActivityModel(this.id.value, this.createdDate.toDate(), this.post?.toPostModel())
-        ActivityTypes.GITHUB -> TODO()
+
+    return transaction {
+        return@transaction when (type) {
+            ActivityTypes.POLS -> ActivityResponse.ActivityModel(id.value, createdDate.toDate(), poll?.toPollModel())
+            ActivityTypes.POST -> ActivityResponse.ActivityModel(id.value, createdDate.toDate(), post?.toPostModel())
+            ActivityTypes.GITHUB -> TODO()
+        }
     }
 }
 

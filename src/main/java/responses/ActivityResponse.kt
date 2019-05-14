@@ -3,7 +3,7 @@ package responses
 import io.ktor.http.HttpStatusCode
 import java.util.*
 
-sealed class ActivityResponse(open val codeResult: HttpStatusCode, open val data: Any) {
+sealed class    ActivityResponse(open val codeResult: HttpStatusCode, open val data: Any) {
 
 
     open class BaseActivity
