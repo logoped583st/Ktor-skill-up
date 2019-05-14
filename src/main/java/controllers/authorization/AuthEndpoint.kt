@@ -30,14 +30,14 @@ fun Route.auth() {
     post("/registration") {
 
         try {
-            val model: AuthModel? = call.receive()
+            val model: AuthModel = call.receive()
 
-            model?.let {
+            model.let {
                 val authResponse = authService.registration(model.login, model.password)
                 call.respond(authResponse.codeResult, authResponse.data)
             }
         } catch (e: ContentTransformationException) {
-            print(e.message)
+            println(e.message + "ERROR")
             call.respond(AuthResponse.IncorrectBody())
         }
 

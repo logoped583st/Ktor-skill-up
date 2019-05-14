@@ -61,7 +61,7 @@ private fun initDb() {
     val config = HikariConfig()
     config.driverClassName = "org.postgresql.Driver"
     config.jdbcUrl = "jdbc:postgresql://localhost:5432/skill_up"
-    config.username = "postgres"
+    config.username = "ws-071-11b"
     config.maximumPoolSize = 3
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
     config.validate()

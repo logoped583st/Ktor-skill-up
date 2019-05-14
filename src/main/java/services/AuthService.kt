@@ -13,11 +13,11 @@ class AuthService(private val authDao: AuthDao, private val userDao: UserDao) {
             return AuthResponse.BadLogin()
         }
 
-        val passwordRegex = Regex("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).*\$")
+      //  val passwordRegex = Regex("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).*\$")
 
-        if (!password.matches(passwordRegex)) {
-            return AuthResponse.BadPassword()
-        }
+//        if (!password.matches(passwordRegex)) {
+//            return AuthResponse.BadPassword()
+//        }
 
         return if (userDao.findUserWithLogin(login)) {
             AuthResponse.TokenResponse(authDao.registration(login, password))

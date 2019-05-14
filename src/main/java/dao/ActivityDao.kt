@@ -64,5 +64,7 @@ class ActivityDao {
 
 }
 
+const val KET = "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"
+
 
 
